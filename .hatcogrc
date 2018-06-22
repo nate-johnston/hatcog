@@ -77,3 +77,9 @@ cmd_private_chat = "/usr/bin/tmux split-window -v -p 50"
 # /bin/browser http://example.com
 cmd_url = "/usr/bin/sensible-browser"
 
+### chatonly ###
+# If this is enabled, only show chat messages.  This has the effect of suppressing
+# ping updates, active/total user counts, and signon/sigoff/nickchange events.
+# Must be set to "on", "yes", or "true"; all other values are equivalent to the
+# default 'false' behavior.
+chatonly = false

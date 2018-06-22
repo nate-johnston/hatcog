@@ -147,6 +147,13 @@ class Client(object):
         self.daemon_port = daemon_port
 
         self.conf = conf
+
+        self.chatonly = False
+        if 'chatonly' in conf:
+            chatonly = conf['chatonly']
+            if chatonly == 'true' or chatonly == 'yes' or chatonly == 'on':
+                self.chatonly = True
+
         self.network = network
         try:
             ident_parts = conf[network].split(",")
@@ -190,7 +197,7 @@ class Client(object):
     def start_interface(self):
         """Start UI"""
 
-        self.terminal = Terminal(self.users)
+        self.terminal = Terminal(self.users, self.chatonly)
         self.terminal.set_channel("{}{}".format(
             self.network, self.channel))
 
@@ -308,10 +315,11 @@ class Client(object):
 
     def act_server(self, msg):
         """Act on server data"""
+        if not ('NICK' in msg and chatonly):
+            display = translate_in(msg, self)
+            if display:
+                self.terminal.write(display)
 
-        display = translate_in(msg, self)
-        if display:
-            self.terminal.write(display)
 
     def stop(self):
         """Close remote connection, restore terminal to sanity"""

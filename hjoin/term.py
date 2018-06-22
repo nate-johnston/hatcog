@@ -19,9 +19,10 @@ LOG = logging.getLogger(__name__)
 class Terminal(object):
     """Curses user interface"""
 
-    def __init__(self, user_manager):
+    def __init__(self, user_manager, chatonly):
         self.users = user_manager
 
+        self.chatonly = chatonly
         self.stdscr = None
         self.win_header = None
         self.win_output = None
@@ -250,15 +251,17 @@ class Terminal(object):
 
     def set_users(self, count):
         """Set number of users"""
-        self.cache['set_users'] = count
-        self.user_count = count - 1         # -1 to not include ourselves
-        self._display_user_count()
+        if not self.chatonly:
+            self.cache['set_users'] = count
+            self.user_count = count - 1         # -1 to not include ourselves
+            self._display_user_count()
 
     def set_active_users(self, active_count):
         """Set number of active users"""
-        self.cache['set_active_users'] = active_count
-        self.active_user_count = active_count
-        self._display_user_count()
+        if not self.chatonly:
+            self.cache['set_active_users'] = active_count
+            self.active_user_count = active_count
+            self._display_user_count()
 
     def _display_user_count(self):
         """Display number of users in UI"""
@@ -283,7 +286,8 @@ class Terminal(object):
     def set_ping(self, server_name):
         """Received a server ping"""
         now = datetime.now().strftime("%H:%M")
-        self.set_host("%s (Last ping %s)" % (server_name, now))
+        if not self.chatonly:
+            self.set_host("%s (Last ping %s)" % (server_name, now))
 
     def rebuild(self):
         """Rebuild the app, usually because it got resized"""
